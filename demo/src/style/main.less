@@ -1,3 +1,4 @@
+@import './code-color.less';
 *,
 *::before,
 *::after {
@@ -138,12 +139,8 @@ img {
   }
   .hljs {
     margin: @space-m 0;
-    padding: @space-s @space-m;
+    padding: @space-l @space-xl;
     background-color: @bg-color-m;
-
-    code {
-      color: @font-color-m;
-    }
   }
 
   li:not(.yk-anchor-item) {
@@ -158,9 +155,12 @@ img {
   }
   pre {
     overflow: hidden;
+    margin-bottom: @space-ss;
+    padding: @space-m;
     max-width: 800px;
     border-radius: 8px;
     text-align: left;
+    background-color: #e6effb;
   }
   p > code {
     padding: 2px 8px;
