@@ -1,3 +1,4 @@
+@import '../../styles/color/colors.less';
 .yk-anchor {
   position: relative;
   &.yk-anchor-show-marker {
@@ -53,6 +54,15 @@
     &.yk-anchor-item-title-active {
       font-weight: 500;
       color: @pcolor;
+    }
+  }
+}
+
+.yk-anchor-show-marker {
+  .yk-anchor-item-title {
+    &.yk-anchor-item-title-active {
+      font-weight: 500;
+      color: @font-color-l;
     }
   }
 }

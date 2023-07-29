@@ -70,8 +70,16 @@ const generalRoutes: Array<RouteRecordRaw> = [
     component: () => import('@/examples/rate/doc.md'),
   },
   {
+    path: 'input',
+    component: () => import('@/examples/input/doc.md'),
+  },
+  {
     path: 'scrollbar',
     component: () => import('@/examples/scrollbar/doc.md'),
+  },
+  {
+    path: 'alert',
+    component: () => import('@/examples/alert/doc.md'),
   },
 ];
 
