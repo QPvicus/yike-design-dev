@@ -2,11 +2,16 @@ import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import createVuePlugin from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
-import vitePluginMarkdown from './plugins/vite-plugin-md.mjs';
+import vitePluginMarkdown from './plugins/vite-plugin-md';
 import Components from 'unplugin-vue-components/vite';
 import { YikeDevResolver } from './plugins/resolver';
 import path from 'path';
-const vuePlugin = createVuePlugin({ include: [/\.vue$/, /\.md$/] }); // 配置可编译 .vue 与 .md 文件
+const vuePlugin = createVuePlugin({
+  include: [/\.vue$/, /\.md$/],
+  script: {
+    defineModel: true,
+  },
+}); // 配置可编译 .vue 与 .md 文件
 
 const compDir = path
   .resolve(__dirname, '..\\packages\\yike-design-ui\\src\\components')
@@ -52,7 +57,8 @@ export default defineConfig({
     preprocessorOptions: {
       less: {
         charset: false,
-        additionalData: '@import (reference) "./src/style/color/colors.less";',
+        additionalData:
+          '@import (reference) "yike-design-ui/src/components/styles/index.less";',
       },
     },
   },

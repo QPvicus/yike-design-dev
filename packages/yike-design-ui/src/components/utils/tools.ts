@@ -101,9 +101,16 @@ export const transformPxToNumber = (measurement: number | string) => {
 };
 
 /** 数字 => px 字符串 */
-export const toPx = (px: string | number) => {
+export const toPx = (px?: string | number) => {
   if (typeof px === 'number') {
     return `${px}px`;
   }
   return px;
 };
+
+/** 生成唯一ID */
+export function generateUid() {
+  const randomPart = Math.floor(Math.random() * 10000); // 生成 0-9999 之间的随机数
+  const timestampPart = Date.now(); // 获取当前时间戳
+  return parseInt(`${randomPart}${timestampPart}`, 10); // 将随机数和时间戳拼接为一个整数类型的 UID
+}

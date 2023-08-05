@@ -1,5 +1,10 @@
 <template>
-  <div :class="bem()">
+  <div
+    :class="bem()"
+    :style="style"
+    @mouseenter="mouseenter"
+    @mouseleave="mouseleave"
+  >
     <div v-if="$slots.prepend" :class="bem('prepend')">
       <slot name="prepend" />
     </div>
@@ -17,8 +22,6 @@
         }),
         bem([size]),
       ]"
-      @mouseenter="mouseenter"
-      @mouseleave="mouseleave"
     >
       <div v-if="$slots.prefix" :class="bem(['slot', 'before'])">
         <slot name="prefix" />
@@ -30,6 +33,7 @@
         :placeholder="placeholder"
         :disabled="disabled"
         :readonly="readonly"
+        :required="required"
         :class="bem('widget')"
         :type="inputType"
         tabindex="0"
@@ -40,7 +44,7 @@
         @blur="blur"
         @compositionstart="compositionstart"
         @compositionend="compositionend"
-        @keydown.enter="submit"
+        @keydown="keydown"
       />
       <div :class="bem('buttons')">
         <button
@@ -50,7 +54,7 @@
           :class="YkInputButtonClass"
           @click="switchType"
         >
-          <IconClosedEyeFill />
+          <IconCloseEyeOutline />
         </button>
         <button
           v-if="clearable && !disabled"
@@ -59,7 +63,7 @@
           :class="YkInputButtonClass"
           @click="clear"
         >
-          <IconCrossOutline />
+          <IconCloseOutline />
         </button>
       </div>
       <div v-if="showCounter" :class="bem('counter')">
@@ -86,18 +90,18 @@ import '../style'
 import { computed, ref, toRef } from 'vue'
 import { createCssScope } from '../../utils/bem'
 import { useInputTooltip } from './utils'
+
 defineOptions({
   name: 'YkInput',
 })
 const props = withDefaults(defineProps<InputProps>(), {
-  id: '',
-  name: '',
   size: 'l',
   type: 'text',
   placeholder: '',
   value: '',
   disabled: false,
   readonly: false,
+  required: false,
   visible: true,
   clearable: false,
   status: 'primary',
@@ -121,6 +125,7 @@ const emits = defineEmits([
   'clear',
   'change',
   'submit',
+  'keydown',
   'update:value',
 ])
 const inputRef = ref<HTMLInputElement>()
@@ -135,7 +140,7 @@ const focus = () => {
   // 禁用与只读状态不可被聚焦
   if (props.disabled || props.readonly) return
   isFocus.value = true
-  if (props.tooltip && props.tooltip !== '') {
+  if (props.tooltip.length > 0) {
     tooltip!.set(props.tooltip)
   }
   emits('focus', lastValue)
@@ -148,7 +153,7 @@ const update = () => {
     lastValue = lastValue.slice(0, props.limit)
     inputRef.value!.value = lastValue
   }
-  ;(realValue as any) = lastValue // 别删
+  ;(realValue as any) = lastValue
   shouldShowButton.value = lastValue.length > 0 ? true : false
   valueCounter.value = lastValue.length
   emits('update:value', lastValue)
@@ -186,8 +191,8 @@ const compositionend = () => {
   isTyping.value = false
 }
 
-const submit = () => {
-  emits('submit', lastValue)
+const keydown = (ev: KeyboardEvent) => {
+  emits('keydown', ev)
 }
 
 const switchType = () => {

@@ -1,4 +1,4 @@
-import { createVNode, render, reactive, ref, isVNode, VNode } from 'vue';
+import { createVNode, render, reactive, ref } from 'vue';
 import { NotificationOptions } from './notification';
 import { NOTIFICATIONTYPE } from '../../utils/constant';
 import NotificationGroup from './notification-group.vue';
@@ -24,13 +24,13 @@ class NotificationManager {
     render(vm, this.container);
     document.body.appendChild(this.container);
   }
-  add = (config: NotificationOptions) => {
+  add = (options: NotificationOptions) => {
     this.seed++;
     const id = `yk-notification__${this.seed}`;
     const notification: NotificationOptions = reactive({
       id,
       zIndex: this.zIndex,
-      ...config,
+      ...options,
     });
 
     this.notifications.value.push(notification);
@@ -61,7 +61,7 @@ class NotificationManager {
 }
 
 let Instance = <NotificationManager>{};
-const notification: any = (options: NotificationOptions) => {
+export const notification: any = (options: NotificationOptions) => {
   if (!Instance.created) {
     Instance = new NotificationManager();
   }
@@ -69,12 +69,7 @@ const notification: any = (options: NotificationOptions) => {
 };
 
 NOTIFICATIONTYPE.forEach((item) => {
-  notification[item] = (options: { message: string | VNode }) => {
-    if (typeof options === 'string' || isVNode(options)) {
-      options = {
-        message: options,
-      };
-    }
+  notification[item] = (options: NotificationOptions) => {
     return notification({
       ...options,
       type: item,
@@ -82,4 +77,40 @@ NOTIFICATIONTYPE.forEach((item) => {
   };
 });
 
-export default notification;
+/** 定制 Notificaition setTimeout，支持鼠标移入暂停，鼠标移出重启倒计时，
+ *  鼠标移出时首个组件重置倒计时为duration，后继组件根据移入时的时间差，递增倒计时 */
+export class pauseSetTimeout {
+  private cb: () => void;
+  private setTimeoutID!: number;
+  private startTime!: number;
+  private duration!: number;
+  public remainTime!: number;
+  public isFixed!: boolean; //duration <= 0, 组件不自动消失
+  constructor(cb: () => void, delay: number) {
+    this.cb = cb;
+    this.remainTime = delay;
+    this.duration = delay;
+    this.isFixed = delay <= 0 ? true : false;
+  }
+
+  pause = () => {
+    if (this.isFixed) return;
+    clearTimeout(this.setTimeoutID);
+    this.remainTime -= Date.now() - this.startTime;
+  };
+
+  play = (firstRemainTime: number, isFirstPlay = false) => {
+    if (this.isFixed) return;
+
+    clearTimeout(this.setTimeoutID);
+    !isFirstPlay &&
+      (this.remainTime = this.remainTime - firstRemainTime + this.duration);
+    this.startTime = Date.now();
+
+    this.setTimeoutID = Number(
+      setTimeout(() => {
+        this.cb();
+      }, this.remainTime),
+    );
+  };
+}

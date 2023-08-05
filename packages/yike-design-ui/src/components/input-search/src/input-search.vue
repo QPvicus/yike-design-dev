@@ -7,7 +7,7 @@
     :size="size"
     :placeholder="placeholder"
     :loading="loading"
-    @submit="search"
+    @keydown.enter="search"
   >
     <template #prefix>
       <slot name="prefix" />
@@ -27,7 +27,6 @@ defineOptions({
 })
 const props = withDefaults(defineProps<InputSearchProps>(), {
   name: '',
-  id: '',
   size: 'l',
   placeholder: '',
   clearable: true,
@@ -36,6 +35,6 @@ const props = withDefaults(defineProps<InputSearchProps>(), {
 const value = ref<string>()
 const emits = defineEmits(['search', 'change'])
 const search = () => {
-  emits('search', value.value ?? '')
+  emits('search', value.value)
 }
 </script>

@@ -60,6 +60,7 @@
           @handle-re-upload="handleReUpload"
           @handle-abort="handleAbort"
           @handle-edit="handleEdit"
+          @handle-review="handleReview"
         ></upload-picture-item>
       </span>
       <div
@@ -76,6 +77,16 @@
       </div>
     </div>
   </div>
+  <yk-image-preview-group
+    v-if="reviewVisible"
+    v-model:visible="reviewVisible"
+    :src-list="imagesUrlList"
+    :is-render="false"
+    :default-current="defaultReviewIndex"
+    width="300"
+    height="200"
+    fit="cover"
+  ></yk-image-preview-group>
 </template>
 <script setup lang="ts">
 import { ref, computed, getCurrentInstance } from 'vue'
@@ -87,12 +98,13 @@ import {
   RequestInstance,
 } from './upload'
 import { UploadRequest } from './ajax'
-import { generateListUid, generateUid, findFileByUid } from './utils'
+import { generateListUid, findFileByUid, blobToFile } from './utils'
+import { generateUid } from '../../utils/tools'
 import { createCssScope } from '../../utils/bem'
 import UploadFileItem from './upload-file-item.vue'
 import uploadDraggle from './upload-draggle.vue'
 import UploadPictureItem from './upload-picture-item.vue'
-
+import { YkImagePreviewGroup } from '../../../index'
 defineOptions({
   name: 'YkUpload',
 })
@@ -118,12 +130,31 @@ const emits = defineEmits([
   'handleBeforeUpload',
 ])
 const isPicture = ref(false)
+
+const reviewVisible = ref(false)
+
+// 预览时的默认下标
+
+const defaultReviewIndex = ref(0)
+
 const currentList = ref<UploadFile[]>(generateListUid(props.fileList))
 const inputRef = ref<HTMLElement>()
 const uploadInstances = new Map<number, RequestInstance>()
 const currentLength = computed(() => {
   return currentList.value.length
 })
+
+const imagesUrlList = computed(() => {
+  const urlArray = currentList.value.map((ele) => {
+    if (ele.raw) {
+      const blobRaw = URL.createObjectURL(ele.raw)
+      return blobRaw
+    }
+    return ele.url
+  }) as string[]
+  return urlArray
+})
+
 const uploadDisabled = computed(() => {
   return !!props.limit && currentLength.value >= props.limit
 })
@@ -195,7 +226,7 @@ const handleBeforeUpload = (uploadFile: File) => {
   return true
 }
 
-const handleInputChange = (event) => {
+const handleInputChange = (event: any) => {
   const uploadFiles = Array.from(event.target.files) as File[]
   if (!uploadFiles.length) {
     return
@@ -234,10 +265,18 @@ const handleReUpload = (uid: number) => {
   onUploadRequest(raw)
 }
 
-const handleEdit = (uid: number) => {
-  findFileByUid(uid, currentList.value)
-  // ToDo use idx filter file to edit
-  handleUpload()
+const handleEdit = (blob: Blob, uid: number) => {
+  const idx = findFileByUid(uid, currentList.value)
+  const fileName = currentList.value[idx].name
+  currentList.value.splice(findFileByUid(uid, currentList.value), 1)
+  const newFile = blobToFile(blob, fileName)
+  onUploadRequest(newFile)
+}
+
+const handleReview = (uid: number) => {
+  const idx = findFileByUid(uid, currentList.value)
+  defaultReviewIndex.value = idx
+  reviewVisible.value = true
 }
 
 // dragger methods

@@ -13,7 +13,9 @@
       <circle r="20" cy="50" cx="50"></circle>
     </svg>
 
-    <slot v-else name="icon" />
+    <span v-if="$slots.icon" :class="icon">
+      <slot name="icon" />
+    </span>
     <slot></slot>
   </button>
 </template>
@@ -24,6 +26,7 @@ export default {
 }
 </script>
 <script setup lang="ts">
+import { computed } from 'vue'
 import { ButtonProps } from './button'
 
 import { createCssScope } from '../../utils/bem'
@@ -33,12 +36,18 @@ const bem = createCssScope('button')
 defineOptions({
   name: 'YKButton',
 })
-withDefaults(defineProps<ButtonProps>(), {
+const props = withDefaults(defineProps<ButtonProps>(), {
   type: 'primary',
   size: 'l',
   shape: 'default',
   long: false,
   loading: false,
   disabled: false,
+})
+
+const icon = computed(() => {
+  return {
+    'yk-button__icon': props.shape != 'circle' && props.shape != 'square',
+  }
 })
 </script>

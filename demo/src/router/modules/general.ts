@@ -66,12 +66,25 @@ const generalRoutes: Array<RouteRecordRaw> = [
     component: () => import('@/examples/color/doc.md'),
   },
   {
+    path: 'progress',
+    component: () => import('@/examples/progress/doc.md'),
+  },
+
+  {
     path: 'rate',
     component: () => import('@/examples/rate/doc.md'),
   },
   {
+    path: 'breadcrumb',
+    component: () => import('@/examples/breadcrumb/doc.md'),
+  },
+  {
     path: 'input',
     component: () => import('@/examples/input/doc.md'),
+  },
+  {
+    path: 'affix',
+    component: () => import('@/examples/affix/doc.md'),
   },
   {
     path: 'scrollbar',
@@ -80,6 +93,38 @@ const generalRoutes: Array<RouteRecordRaw> = [
   {
     path: 'alert',
     component: () => import('@/examples/alert/doc.md'),
+  },
+  {
+    path: 'tree',
+    component: () => import('@/examples/tree/doc.md'),
+  },
+  {
+    path: 'slider',
+    component: () => import('@/examples/slider/doc.md'),
+  },
+  {
+    path: 'collapse',
+    component: () => import('@/examples/collapse/doc.md'),
+  },
+  {
+    path: 'dropdown',
+    component: () => import('@/examples/dropdown/doc.md'),
+  },
+  {
+    path: 'popconfirm',
+    component: () => import('@/examples/popconfirm/doc.md'),
+  },
+  {
+    path: 'collapse',
+    component: () => import('@/examples/collapse/doc.md'),
+  },
+  {
+    path: 'input-number',
+    component: () => import('@/examples/input-number/doc.md'),
+  },
+  {
+    path: 'image',
+    component: () => import('@/examples/image/doc.md'),
   },
 ];
 

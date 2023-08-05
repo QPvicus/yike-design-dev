@@ -1,3 +1,4 @@
+import { CSSProperties } from 'vue';
 import { Size, Status } from '../../utils/constant';
 
 export type InputProps = {
@@ -9,6 +10,7 @@ export type InputProps = {
   value?: string;
   disabled?: boolean;
   readonly?: boolean;
+  required?: boolean;
   clearable?: boolean;
   visible?: boolean;
   status?: Status;
@@ -16,4 +18,5 @@ export type InputProps = {
   showCounter?: boolean;
   limit?: number;
   tooltip?: string;
+  style?: CSSProperties;
 };

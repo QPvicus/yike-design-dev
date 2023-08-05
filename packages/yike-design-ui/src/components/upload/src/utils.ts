@@ -1,4 +1,5 @@
 import type { UploadFile, UserFile } from './upload';
+import { generateUid } from '../../utils/tools';
 export const imageTypes = ['image', 'jpeg', 'png', 'gif'];
 export function getArcPath(
   cx: number,
@@ -14,11 +15,7 @@ export function getArcPath(
     endAngle < Math.PI ? '0' : '1'
   },1 ${x},${y} Z`;
 }
-export function generateUid() {
-  const randomPart = Math.floor(Math.random() * 10000); // 生成 0-9999 之间的随机数
-  const timestampPart = Date.now(); // 获取当前时间戳
-  return parseInt(`${randomPart}${timestampPart}`, 10); // 将随机数和时间戳拼接为一个整数类型的 UID
-}
+
 export function generateListUid(list: UserFile[]) {
   const uploadList = list.map((item: any) => {
     return { uid: generateUid(), status: 'success', ...item }; // 在每个元素上添加 uid 属性并将其赋值为生成的 uid
@@ -103,4 +100,41 @@ export function filesFiltered(files: File[], accept: string) {
         return false;
       });
   });
+}
+
+/**
+ * 将 Base64 数据转换为 File 对象
+ * @param {string} base64Data - Base64 编码的数据
+ * @param {string} fileName - 文件名
+ * @returns {File} - 转换后的 File 对象
+ */
+export function base64ToFile(base64Data: string, fileName: string) {
+  const byteCharacters = atob(base64Data);
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+    const slice = byteCharacters.slice(offset, offset + 512);
+
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+
+  const file = new File(byteArrays, fileName, { type: 'image/jpeg' });
+  return file;
+}
+
+/**
+ * 将 Blob 对象转换为 File 对象
+ * @param {Blob} blob - Blob 对象
+ * @param {string} fileName - 文件名
+ * @returns {File} - 转换后的 File 对象
+ */
+export function blobToFile(blob: Blob, fileName: string) {
+  const file = new File([blob], fileName, { type: blob.type });
+  return file;
 }

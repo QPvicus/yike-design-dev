@@ -35,6 +35,8 @@ defineProps({
   top: 60px;
   left: 0;
   z-index: 1;
+  padding-top: 2px;
+  padding-right: 4px;
   width: 268px;
   height: calc(100% - 60px);
   border-right: 1px solid @line-color-s;
@@ -47,22 +49,24 @@ defineProps({
   }
 
   .bar-title {
+    overflow: hidden;
     margin-top: @space-xl;
     padding-left: @space-ss;
     height: 40px;
-    line-height: 40px;
     color: @font-color-l;
+    line-height: 40px;
   }
 
   .bar-list {
     display: block;
+    overflow: hidden;
     margin-bottom: @space-ss;
     padding: 0 @space-l;
     height: 40px;
     border-radius: @radius-m;
     color: @font-color-m;
-    line-height: 40px;
     transition: background-color @animatb;
+    line-height: 40px;
 
     &:hover {
       background-color: @pcolor-1;
